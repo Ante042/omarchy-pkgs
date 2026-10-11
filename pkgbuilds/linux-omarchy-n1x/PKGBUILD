@@ -3,7 +3,7 @@
 
 pkgbase=linux-omarchy-n1x
 pkgver=7.2.8
-pkgrel=1
+pkgrel=2
 pkgdesc='Omarchy Linux for the NVIDIA N1x (BORE CPU scheduler, ADIOS I/O scheduler)'
 url='https://omarchy.org'
 arch=(
@@ -212,6 +212,7 @@ source=(
   1030-n1x-audio.patch
   1031-ALSA-hda-acpi-add-runtime-PM-suspend-resume-to-the-ACPI-controller.patch
   1032-ASoC-cs35l56-Wait-for-firmware-timer-expiry-before-system-suspend.patch
+  1034-soundwire-mediatek-close-the-interrupt-gate-before-quiescing-a-link.patch
   1040-n1x-gpu-iommu.patch
   1050-efi-add-efi_reclaim_reserved-to-use-idle-reserved-memory-as-RAM.patch
   1060-ASoC-mediatek-mt8901-give-the-card-the-ACPI-subsystem-ID.patch
@@ -561,6 +562,7 @@ sha256sums=('12e8d5a973d1ad7c5a5c69882e4022b131ed715db7003fdcd760ddf8c3e51941'
             '025a71916a65683a7fe672eee2fa73bd05859e9d4f0e926e1e8678ecc8e6ef7d'
             '45f6ae0ea53e4edb40a61a49100413bd8e66a814fb95e8d1175938d76a12b4fc'
             'ea4526ff83f659e55b0ad0b4aaac1e8402a8a645ed82fc697b80d36565586749'
+            '0251766c52add0dfb792616dd93244aa242f406dd7ff8b20eec043b3fe50fa47'
             '937ea870466d793eee9844a90949864d726356a0bfba0f4ee8fb2baede0142c9'
             '6fb9d082a2735345ddce0af9786e424fdd755619e3aa06ecb01921f2b1a73c47'
             '763c138559d7f1c831a6ea6b28a3ba3c889c58662899bcc3570d49ffc4eba31d'
@@ -904,6 +906,7 @@ b2sums=('5326dde778eb945f282740ef0d8765b46fbd198f1209cdfd7b91e5dac1312fc01f8bf0b
         '2e760b5f1fdc1a8cfc6f61c6ea894f9ba3aebc80788c332a945d23828c6479c5fda4af195010e7c50abcec5d3716bc1b10b3b4a70a6309e13fb7c4dd0b7a6404'
         'e2563eea0b9694d8dbe193b96f817b783485b25b6d01db0c2003a6d1302760cf15a8c084badc4ac33bdd324517cad5d02a0b6088f897167e628e575bc9214d0e'
         'e399a5ce09295cb2b9faccde569a27f879cc406b4a81ae537d499f7b0af4f73dfb5ebbdb9560d3adbcee6f6e4157e12528a50e5acd62a4cfe357bb24d112e43d'
+        '3c99b0dfc4164fa388901dc61695ab835f6457630f066ee1f11a0836bae4253081167530ebcca502441b3235e611f7e55a73a732378de08b21caab37132205e5'
         'c87df2ca6c4d22d892a7380dbacf11f7339c44819a431468646da6b0710787b10d30877a5715f2112952b8009da56a82f62eb6b56de237c0a898f29444987456'
         '2afb47d8af94e845c97acd7453baf58875264d1f46768f67c0bca78477d9a746bd4dc81c59163ce1d4244d4fbff329105a348a2868e637a82d78ee4b1280e8d4'
         'f76a4d5e1018a9714c35b72fa1ec8b7ae733a0f08c013a5708b2077db4d4a9cdf4e7b2011099a89b6a534edd1bed7521dceb921532cce53d00d61ce9b0fdfab8'
