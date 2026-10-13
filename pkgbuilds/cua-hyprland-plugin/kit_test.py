@@ -4,6 +4,7 @@
 Usage: kit_test.py ARCHIVE ARCHIVE_SHA256 PROFILE KIT_SHA256
 """
 
+import importlib._bootstrap_external
 import io
 import json
 from pathlib import Path
@@ -99,6 +100,20 @@ class KitTests(unittest.TestCase):
         (self.srcdir / kit.KIT / "extra.py").write_text("\n")
         with self.assertRaisesRegex(ValueError, "inventory"):
             self.run_kit("check")
+
+    def test_planted_bytecode_never_runs(self):
+        self.run_kit("extract")
+        verifier = self.srcdir / kit.KIT / "profile_verify.py"
+        marker = self.root / "planted-bytecode-ran"
+        code = compile(f"open({str(marker)!r}, 'w').close()\n", str(verifier), "exec")
+        stat = verifier.stat()
+        cache = verifier.parent / "__pycache__"
+        cache.mkdir()
+        (cache / f"profile_verify.{sys.implementation.cache_tag}.pyc").write_bytes(
+            importlib._bootstrap_external._code_to_timestamp_pyc(code, int(stat.st_mtime), stat.st_size))
+        with self.assertRaisesRegex(ValueError, "inventory"):
+            self.run_kit("check")
+        self.assertFalse(marker.exists())
 
     def test_unreviewed_kit_provenance_refuses(self):
         with self.assertRaisesRegex(ValueError, "kit provenance checksum"):

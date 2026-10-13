@@ -3,10 +3,10 @@
 
 import argparse
 import hashlib
-import importlib.util
 import io
 from pathlib import Path, PurePosixPath
 import tarfile
+import types
 
 # The packages whose updates Cua's daily compatibility CI requalifies the plugin against,
 # less hyprland and gcc, which the profile pins in its own fields.
@@ -45,10 +45,11 @@ def read_kit(archive, checksum):
     return payload
 
 
-def load_verifier(path):
-    spec = importlib.util.spec_from_file_location("profile_verify", path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+def load_verifier(path, source):
+    # Compile the authenticated bytes; an import could run stale bytecode from a reused __pycache__.
+    module = types.ModuleType("profile_verify")
+    module.__file__ = str(path)
+    exec(compile(source, str(path), "exec"), module.__dict__)
     return module
 
 
@@ -103,7 +104,7 @@ def run(mode, archive, archive_sha256, profile, srcdir, kit_sha256):
     verifier = kit / "profile_verify.py"
     require(verifier.is_file() and not verifier.is_symlink() and verifier.read_bytes() == payload["profile_verify.py"],
             "extracted verifier differs from the kit")
-    verify = load_verifier(verifier)
+    verify = load_verifier(verifier, payload["profile_verify.py"])
     derived, stem = derive(payload, profile.read_bytes(), verify)
     if mode == "extract":
         for name, content in derived.items():
