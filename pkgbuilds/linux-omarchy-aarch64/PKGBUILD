@@ -8,7 +8,7 @@
 pkgbase=linux-omarchy-aarch64
 _kernel=linux-omarchy
 pkgver=7.2.8
-pkgrel=9
+pkgrel=10
 pkgdesc='Omarchy Linux for aarch64 (BORE CPU scheduler, ADIOS I/O scheduler)'
 url='https://omarchy.org'
 arch=(
@@ -237,6 +237,7 @@ source=(
   1082-thunderbolt-retry-the-NVIDIA-N1x-DP-IN-adapters-after-a-DPRX-failure.patch
   1083-usb-typec-ucsi-retry-init-when-the-PPM-answers-early-commands-incorrectly.patch
   1084-usb-typec-ucsi-allow-retries-of-ucsi_resume_work.patch
+  1085-thunderbolt-keep-the-tunnels-of-routers-kept-awake-in-system-sleep.patch
   1090-sspm_ci-distinguish-not-submitted-from-completion-unknown.patch
   1091-PCI-harden-MediaTek-Power-Wrap-system-sleep.patch
   1092-usb-xhci-mtk-v2-add-ACPI-power-management-support.patch
@@ -589,6 +590,7 @@ sha256sums=('12e8d5a973d1ad7c5a5c69882e4022b131ed715db7003fdcd760ddf8c3e51941'
             '5c24923ed9e4d16116e8067cbbd0b0074b62eeb120a86162052a165927c11732'
             '44d34d84852429497e146d5f8f19b576a5c36c8b9a9f3e7f45792f51fd7b4e6f'
             '63c3741a283dcd762de5bc975b8e97aa236328de68e8fd6623bf6d7fd125c3a2'
+            '1de7b523ca7fea0dcd4a4bbd5b7afd2824880ad74748e0ea83b7a83f6c74a45d'
             '8bd7382591d136f35fee515fd634767ffa8b2ec1bb28e945fdd01fac0cc1469c'
             '62f996f0d8a1723ce5aa2c73e09888ece981e6b46b4f37842022110067b712ba'
             '01b9987523cb65f53481052f3160bc595bbbb55713df3094f00a851e71bf1182'
@@ -935,6 +937,7 @@ b2sums=('5326dde778eb945f282740ef0d8765b46fbd198f1209cdfd7b91e5dac1312fc01f8bf0b
         'c415a83603af5e53a8d61109abd6a28c486263be92fc3c8ed196244ad09b87e72a3c713fa87737703e2a050684dcd605ad90ac2f7b81c9d7cb53bb3c55fa373f'
         'ef20c22016ec56cf2c8afd183b39b3472fb030d788b8803da20bf6753773b54d28221d2f595fe27b7951d1fc269f3572e1a23bb533252de0f20ab8ee1ad3b56e'
         '48f5e13d1f4e23e0bac628ab6766c13ca24d38698f37934b7dfc839c5de2e3d3842d5f6c9ee4591c0b2d934b7ac882d14abe793b9d33b84d888ce7965c194208'
+        'c9dac039a1a2851e5b07e98307e0b6b78c1bfc30b7e413675ed64a833f820058093f49a845a2e1908c54967b7ed231b6d9592d4e91d460101c938bdb26a1ea37'
         '45b72aecaacccf061d50279f790598b22475b723184451dd1927c96471ff584b72062a3bf6e0a77c01ea297adca89154e3a30114aa6d8c32f664c90a7d8e4953'
         '856b0de2f3ce534d47cdf34c70533e6a09878c4a5972b2bd42f12a42947178a67e449798bd1ad049de48df7f01e036119578fd5fe63d460d805c6147e78051a3'
         '84afc20a730a7e94719238788db563abf8e02837e3a53814f848ce607ab42340de0c90f70eb565727a5fbc22ef254497fd08bf20286ead48b7cc175a1257eeb2'
