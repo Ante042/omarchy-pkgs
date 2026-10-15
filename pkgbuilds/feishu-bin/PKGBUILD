@@ -75,6 +75,14 @@ package() {
     x86_64) expected_machine='Advanced Micro Devices X86-64' ;;
     aarch64) expected_machine=AArch64 ;;
   esac
+
+  # The arm64 deb carries an x86-64 copy of this one library, which nothing
+  # links and an ARM machine cannot load; drop it only while it is that copy.
+  local stray="$app/libbyteview-record.so"
+  if [[ $CARCH == aarch64 && -f $stray ]] &&
+    LC_ALL=C readelf -h "$stray" | grep -q 'Machine:[[:space:]]*Advanced Micro Devices X86-64'; then
+    rm "$stray"
+  fi
   local file machine
   while IFS= read -r -d '' file; do
     [[ $(od -An -tx1 -N4 "$file" | tr -d ' ') == 7f454c46 ]] || continue
