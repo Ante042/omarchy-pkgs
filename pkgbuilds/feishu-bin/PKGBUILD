@@ -1,0 +1,109 @@
+# Maintainer: The Omarchy Authors
+
+pkgname=feishu-bin
+pkgver=7.72.23
+# Feishu files each build under a per-architecture directory on its CDN, read
+# from the same feed as the version.
+_hash_x86_64=fc38d53a
+_hash_aarch64=8d668c7a
+pkgrel=1
+pkgdesc='Feishu (飞书), ByteDance messaging, meetings and docs for the China service'
+arch=('x86_64' 'aarch64')
+url='https://www.feishu.cn/'
+license=('LicenseRef-Feishu')
+depends=(
+  'alsa-lib'
+  'at-spi2-core'
+  'cairo'
+  'dbus'
+  'expat'
+  'gcc-libs'
+  'gdk-pixbuf2'
+  'glib2'
+  'glibc'
+  'gnutls'
+  'gtk3'
+  'libcups'
+  'libdrm'
+  'libgcrypt'
+  'libglvnd'
+  'libpulse'
+  'libx11'
+  'libxcb'
+  'libxcomposite'
+  'libxdamage'
+  'libxext'
+  'libxfixes'
+  'libxkbcommon'
+  'libxrandr'
+  'libxtst'
+  'mesa'
+  'nspr'
+  'nss'
+  'pango'
+  'pixman'
+  'systemd-libs'
+  'xdg-utils'
+  'zlib'
+)
+provides=('feishu' 'bytedance-feishu')
+conflicts=('feishu' 'bytedance-feishu')
+options=('!strip' '!debug' '!emptydirs')
+source=('feishu.sh' 'LICENSE')
+source_x86_64=("feishu-${pkgver}-x86_64.deb::https://sf3-cn.feishucdn.com/obj/ee-appcenter/${_hash_x86_64}/Feishu-linux_x64-${pkgver}.deb")
+source_aarch64=("feishu-${pkgver}-aarch64.deb::https://sf3-cn.feishucdn.com/obj/ee-appcenter/${_hash_aarch64}/Feishu-linux_arm64-${pkgver}.deb")
+noextract=("feishu-${pkgver}-${CARCH}.deb")
+sha256sums=('d881af70e4f556eaa929c03fa6bd6067293d57e85142f33fa0dae4afd7598f40'
+            'b813efe1cc75803f34b8e78c64c09cf5b160e3d9adb3f85696b730216cf09f93')
+sha256sums_x86_64=('7c744ce101e29f50d8d0fc099788b64cb389dde3178178a7fce9ffcdbf296e13')
+sha256sums_aarch64=('8052d22189546438e24b3691d64871805961ecea7a45804c75a2960ed2b8710e')
+
+prepare() {
+  rm -rf feishu
+  mkdir feishu
+  bsdtar -O -xf "feishu-${pkgver}-${CARCH}.deb" 'data.tar.*' | bsdtar -C feishu -xf -
+}
+
+package() {
+  local app="$pkgdir/opt/bytedance/feishu"
+  local expected_machine
+
+  install -d "$pkgdir/opt/bytedance"
+  cp -a --no-preserve=ownership feishu/opt/bytedance/feishu "$app"
+
+  case "$CARCH" in
+    x86_64) expected_machine='Advanced Micro Devices X86-64' ;;
+    aarch64) expected_machine=AArch64 ;;
+  esac
+  local file machine
+  while IFS= read -r -d '' file; do
+    machine=$(readelf -h "$file" 2>/dev/null |
+      sed -n 's/^[[:space:]]*Machine:[[:space:]]*//p')
+    if [[ -n $machine && $machine != "$expected_machine" ]]; then
+      error "Unexpected ${machine} binary: ${file#"$pkgdir"}"
+      return 1
+    fi
+  done < <(find "$app" -type f -print0)
+
+  find "$app" -type d -exec chmod 755 {} +
+  chmod -R go-w "$app"
+
+  install -Dm755 feishu.sh "$pkgdir/usr/bin/feishu"
+
+  # The vendor's maintainer scripts install icons and the desktop entry at
+  # install time; ship them as package files instead, and none of the scripts.
+  local desktop="$pkgdir/usr/share/applications/bytedance-feishu.desktop"
+  install -Dm644 feishu/usr/share/applications/bytedance-feishu.desktop "$desktop"
+  sed -i -e 's|^Exec=.*|Exec=feishu %U|' \
+    -e '/^#/d' -e '/^X-KDE-/d' "$desktop"
+  local size
+  for size in 16 24 32 48 64 128 256; do
+    install -Dm644 "$app/product_logo_${size}.png" \
+      "$pkgdir/usr/share/icons/hicolor/${size}x${size}/apps/bytedance-feishu.png"
+  done
+  install -Dm644 "$app/product_logo_256.svg" \
+    "$pkgdir/usr/share/icons/hicolor/scalable/apps/bytedance-feishu.svg"
+  install -Dm644 feishu/usr/share/appdata/bytedance-feishu.appdata.xml \
+    "$pkgdir/usr/share/metainfo/bytedance-feishu.appdata.xml"
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}
