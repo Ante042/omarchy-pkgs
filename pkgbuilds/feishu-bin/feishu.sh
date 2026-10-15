@@ -1,5 +1,6 @@
 #!/bin/bash
-# Launches Feishu with any flags in $XDG_CONFIG_HOME/feishu-flags.conf.
+# Launches Feishu with the flags in $XDG_CONFIG_HOME/feishu-flags.conf: whitespace-separated,
+# not shell-quoted, with # starting a comment.
 
 flags=()
 conf="${XDG_CONFIG_HOME:-$HOME/.config}/feishu-flags.conf"
